@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>CivicRevolution - Login/Register</title>
+  <style>
+    /* Reset */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #2c8ef4, #14cba8);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .auth-container {
+      background: #fff;
+      width: 90%;
+      max-width: 420px;
+      padding: 2rem;
+      border-radius: 20px;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.2);
+      animation: fadeIn 0.6s ease;
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 1rem;
+      color: #2563eb;
+    }
+
+    input {
+      width: 100%;
+      padding: 0.9rem;
+      margin: 0.6rem 0;
+      border: 1px solid #ccc;
+      border-radius: 10px;
+      font-size: 1rem;
+    }
+
+    button {
+      width: 100%;
+      padding: 0.9rem;
+      background: #2563eb;
+      color: white;
+      border: none;
+      border-radius: 10px;
+      font-size: 1.1rem;
+      cursor: pointer;
+      margin-top: 0.5rem;
+      transition: 0.3s;
+    }
+    button:hover {
+      background: #1e4ed8;
+    }
+
+    .switch-auth {
+      text-align: center;
+      margin-top: 1rem;
+      font-size: 0.95rem;
+    }
+    .switch-auth span {
+      color: #2563eb;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    /* Animation */
+    @keyframes fadeIn {
+      from {opacity: 0; transform: translateY(20px);}
+      to {opacity: 1; transform: translateY(0);}
+    }
+  </style>
+</head>
+<body>
+  <div class="auth-container">
+    <!-- LOGIN FORM -->
+    <div id="loginForm">
+      <h1>Login</h1>
+      <input type="text" id="loginUsername" placeholder="Username" />
+      <input type="password" id="loginPassword" placeholder="Password" />
+      <button onclick="login()">Login</button>
+      <p id="loginError" style="color:red; font-size:0.9rem; display:none;">❌ Invalid credentials</p>
+      <p class="switch-auth">Don’t have an account? <span onclick="showRegister()">Register</span></p>
+    </div>
+
+    <!-- REGISTER FORM -->
+    <div id="registerForm" class="hidden">
+      <h1>Register</h1>
+      <input type="text" id="regUsername" placeholder="Full Name" />
+      <input type="password" id="regPassword" placeholder="Password" />
+      <input type="text" id="regAadhaar" placeholder="Aadhaar Number" maxlength="12" />
+      <input type="text" id="regPhone" placeholder="Phone Number" maxlength="10" />
+      <button onclick="register()">Register</button>
+      <p id="registerError" style="color:red; font-size:0.9rem; display:none;">⚠️ Fill all fields correctly</p>
+      <p class="switch-auth">Already have an account? <span onclick="showLogin()">Login</span></p>
+    </div>
+  </div>
+
+  <script>
+  // Show Register form
+  function showRegister() {
+    document.getElementById("loginForm").classList.add("hidden");
+    document.getElementById("registerForm").classList.remove("hidden");
+    document.getElementById("loginError").style.display = "none";
+    document.getElementById("registerError").style.display = "none";
+  }
+
+  // Show Login form
+  function showLogin() {
+    document.getElementById("registerForm").classList.add("hidden");
+    document.getElementById("loginForm").classList.remove("hidden");
+    document.getElementById("loginError").style.display = "none";
+    document.getElementById("registerError").style.display = "none";
+  }
+
+  // Register user
+  function register() {
+    const user = document.getElementById("regUsername").value.trim();
+    const pass = document.getElementById("regPassword").value.trim();
+    const aadhaar = document.getElementById("regAadhaar").value.trim();
+    const phone = document.getElementById("regPhone").value.trim();
+
+    // Validation
+    if (!user || !pass || !aadhaar || !phone) {
+      document.getElementById("registerError").innerText = "⚠️ All fields are required.";
+      document.getElementById("registerError").style.display = "block";
+      return;
+    }
+    if (!/^\d{12}$/.test(aadhaar)) {
+      document.getElementById("registerError").innerText = "⚠️ Aadhaar must be 12 digits.";
+      document.getElementById("registerError").style.display = "block";
+      return;
+    }
+    if (!/^\d{10}$/.test(phone)) {
+      document.getElementById("registerError").innerText = "⚠️ Phone number must be 10 digits.";
+      document.getElementById("registerError").style.display = "block";
+      return;
+    }
+
+    // Save user in localStorage
+    localStorage.setItem("user", JSON.stringify({ user, pass, aadhaar, phone }));
+    alert("✅ Registration Successful! Please login.");
+    showLogin();
+  }
+
+  // Login
+  function login() {
+    const user = document.getElementById("loginUsername").value.trim();
+    const pass = document.getElementById("loginPassword").value.trim();
+    const savedUser = JSON.parse(localStorage.getItem("user"));
+
+    if (savedUser && savedUser.user === user && savedUser.pass === pass) {
+      localStorage.setItem("loggedIn", "true");
+      window.location.href = "home.html"; // redirect to home
+    } else {
+      document.getElementById("loginError").innerText = "❌ Invalid username or password.";
+      document.getElementById("loginError").style.display = "block";
+    }
+  }
+
+  // Logout (you can call this in home.html)
+  function logout() {
+    localStorage.removeItem("loggedIn");
+    window.location.href = "index.html";
+  }
+
+  // Auto redirect if already logged in
+  window.onload = function() {
+    if (localStorage.getItem("loggedIn") === "true") {
+      window.location.href = "home.html";
+    }
+  };
+</script>
+
+</body>
+</html>

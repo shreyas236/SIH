@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Report Issue - CivicRevolution</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: "Segoe UI", sans-serif;
+      background: #f3f4f6; /* light neutral gray */
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      padding: 2rem;
+    }
+
+    .report-box {
+      background: #ffffff;
+      padding: 2.5rem;
+      border-radius: 20px;
+      width: 100%;
+      max-width: 650px;
+      min-height: 70vh;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+    }
+
+    h1 {
+      text-align: center;
+      color: #1d4ed8; /* calm deep blue */
+      margin-bottom: 2rem;
+      font-size: 2rem;
+    }
+
+    label {
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+      display: block;
+      color: #374151;
+      font-size: 1rem;
+    }
+
+    select, input, textarea {
+      width: 100%;
+      padding: 0.9rem;
+      margin-bottom: 1.5rem;
+      border: 1px solid #d1d5db;
+      border-radius: 12px;
+      font-size: 1rem;
+      background: #f9fafb;
+      transition: border 0.2s, box-shadow 0.2s;
+    }
+
+    select:focus, input:focus, textarea:focus {
+      border-color: #3b82f6;
+      box-shadow: 0 0 0 3px rgba(59,130,246,0.2);
+      outline: none;
+      background: #fff;
+    }
+
+    textarea {
+      resize: vertical;
+      min-height: 120px;
+    }
+
+    button {
+      width: 100%;
+      padding: 1rem;
+      background: #3b82f6; /* soft blue */
+      color: white;
+      border: none;
+      border-radius: 12px;
+      font-size: 1.1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s;
+      margin-top: 0.5rem;
+    }
+
+    button:hover {
+      background: #1d4ed8; /* darker blue */
+    }
+
+    .back-btn {
+      text-align: center;
+      margin-top: auto;
+    }
+
+    .back-btn a {
+      color: #3b82f6;
+      text-decoration: none;
+      font-weight: bold;
+      transition: color 0.2s;
+    }
+
+    .back-btn a:hover {
+      color: #1d4ed8;
+    }
+
+    /* 📱 Mobile optimization */
+    @media (max-width: 600px) {
+      .report-box {
+        padding: 1.5rem;
+        min-height: auto;
+      }
+      h1 {
+        font-size: 1.6rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="report-box">
+    <h1>Report an Issue</h1>
+    <form onsubmit="submitReport(event)">
+      <label for="issue">Issue Type</label>
+      <select id="issue" required>
+        <option value="">-- Select --</option>
+        <option>Pothole</option>
+        <option>Garbage</option>
+        <option>Street Light</option>
+        <option>Water Leakage</option>
+        <option>Other</option>
+      </select>
+
+      <label for="desc">Description</label>
+      <textarea id="desc" placeholder="Explain the issue..." required></textarea>
+
+      <label for="photo">Upload Photo</label>
+      <input type="file" id="photo" accept="image/*" />
+
+      <label for="location">Location</label>
+      <input type="text" id="location" placeholder="Enter location or landmark" required />
+
+      <button type="submit">📩 Submit Report</button>
+    </form>
+
+    <div class="back-btn">
+      <a href="home.html">⬅ Back to Home</a>
+    </div>
+  </div>
+
+  <script>
+    function submitReport(e) {
+      e.preventDefault();
+      const issue = document.getElementById("issue").value;
+      const desc = document.getElementById("desc").value;
+      const location = document.getElementById("location").value;
+
+      let reports = JSON.parse(localStorage.getItem("reports")) || [];
+      reports.push({ issue, desc, location, date: new Date().toLocaleString() });
+      localStorage.setItem("reports", JSON.stringify(reports));
+
+      alert("✅ Report submitted successfully!");
+      window.location.href = "home.html";
+    }
+  </script>
+
+</body>
+</html>
