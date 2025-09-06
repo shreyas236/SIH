@@ -144,6 +144,12 @@
   </style>
 </head>
 <body>
+<script>
+  if (!localStorage.getItem("loggedInUser")) {
+    window.location.href = "index.html"; // force back to login
+  }
+</script>
+
   <header>
     CivicRevolution
     <span>Empowering Citizens</span>
@@ -204,4 +210,5 @@
   </script>
 </body>
 </html>
+
 
