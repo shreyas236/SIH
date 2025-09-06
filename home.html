@@ -145,10 +145,12 @@
 </head>
 <body>
 <script>
-  if (!localStorage.getItem("loggedInUser")) {
-    window.location.href = "index.html"; // force back to login
+  if (localStorage.getItem("loggedIn") !== "true") {
+    // If not logged in, redirect to login page
+    window.location.href = "index.html";
   }
 </script>
+
 
   <header>
     CivicRevolution
@@ -200,15 +202,14 @@
   </footer>
 
   <script>
-   function logout() {
-  // Clear all local storage (or just specific key if needed)
-  localStorage.clear();  
-  // Redirect to login/home page
-  window.location.href = "index.html";
-}
+  function logout() {
+    localStorage.removeItem("loggedIn");
+    window.location.href = "index.html";
+  }
+</script>
 
-  </script>
 </body>
 </html>
+
 
 
