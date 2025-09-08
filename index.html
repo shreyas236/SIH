@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+      <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
@@ -99,15 +99,11 @@
       <p class="switch-auth">Already have an account? <span onclick="showLogin()">Login</span></p>
     </div>
   </div>
-
   <script type="module">
     import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
-
     const SUPABASE_URL = 'https://nusxcdyngdgeieaylaic.supabase.co'
     const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im51c3hjZHluZ2RnZWllYXlsYWljIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTczMTY3NDgsImV4cCI6MjA3Mjg5Mjc0OH0.vV3WAe3pSIH373Njj59dEIJ8mZs0TCrO3_hiezOKAW0'
-
     const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
-
     // Show Register form
     function showRegister() {
       document.getElementById("loginForm").classList.add("hidden");
@@ -122,13 +118,12 @@
       document.getElementById("loginError").style.display = "none";
       document.getElementById("registerError").style.display = "none";
     }
-
     async function register() {
       const user = document.getElementById("regUsername").value.trim();
       const pass = document.getElementById("regPassword").value.trim();
       const aadhaar = document.getElementById("regAadhaar").value.trim();
       const phone = document.getElementById("regPhone").value.trim();
-
+      console.log('Register called with:', { user, pass, aadhaar, phone });
       if (!user || !pass || !aadhaar || !phone) {
         document.getElementById("registerError").innerText = "⚠ All fields are required.";
         document.getElementById("registerError").style.display = "block";
@@ -144,7 +139,6 @@
         document.getElementById("registerError").style.display = "block";
         return;
       }
-
       try {
         const { data, error } = await supabase
           .from('registrations')
@@ -154,16 +148,16 @@
             aadhar: aadhaar, 
             phone: phone 
           }]);
+        console.log('Supabase insert:', { data, error });
         if (error) throw error;
         alert("✅ Registration Successful! Please login.");
         showLogin();
       } catch (error) {
         document.getElementById("registerError").innerText = "⚠ Registration failed. Try again.";
         document.getElementById("registerError").style.display = "block";
-        console.error(error);
+        console.error('Supabase insert error:', error);
       }
     }
-
     // Login is still localstorage-based here; you may want to extend it to Supabase Auth in future
     function login() {
       const user = document.getElementById("loginUsername").value.trim();
@@ -177,13 +171,11 @@
         document.getElementById("loginError").style.display = "block";
       }
     }
-
     // Logout function remains same
     function logout() {
       localStorage.removeItem("loggedIn");
       window.location.href = "index.html";
     }
-
     // Auto redirect if already logged in
     window.onload = function() {
       if (localStorage.getItem("loggedIn") === "true") {
