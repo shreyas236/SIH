@@ -11,7 +11,6 @@
       padding: 0;
       box-sizing: border-box;
     }
-
     body {
       font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
       background: linear-gradient(135deg, #2c8ef4, #14cba8);
@@ -20,7 +19,6 @@
       align-items: center;
       justify-content: center;
     }
-
     .auth-container {
       background: #fff;
       width: 90%;
@@ -30,13 +28,11 @@
       box-shadow: 0 6px 20px rgba(0,0,0,0.2);
       animation: fadeIn 0.6s ease;
     }
-
     h1 {
       text-align: center;
       margin-bottom: 1rem;
       color: #2563eb;
     }
-
     input {
       width: 100%;
       padding: 0.9rem;
@@ -45,7 +41,6 @@
       border-radius: 10px;
       font-size: 1rem;
     }
-
     button {
       width: 100%;
       padding: 0.9rem;
@@ -61,7 +56,6 @@
     button:hover {
       background: #1e4ed8;
     }
-
     .switch-auth {
       text-align: center;
       margin-top: 1rem;
@@ -72,11 +66,9 @@
       cursor: pointer;
       font-weight: bold;
     }
-
     .hidden {
       display: none;
     }
-
     /* Animation */
     @keyframes fadeIn {
       from {opacity: 0; transform: translateY(20px);}
@@ -95,7 +87,6 @@
       <p id="loginError" style="color:red; font-size:0.9rem; display:none;">❌ Invalid credentials</p>
       <p class="switch-auth">Don’t have an account? <span onclick="showRegister()">Register</span></p>
     </div>
-
     <!-- REGISTER FORM -->
     <div id="registerForm" class="hidden">
       <h1>Register</h1>
@@ -104,86 +95,102 @@
       <input type="text" id="regAadhaar" placeholder="Aadhaar Number" maxlength="12" />
       <input type="text" id="regPhone" placeholder="Phone Number" maxlength="10" />
       <button onclick="register()">Register</button>
-      <p id="registerError" style="color:red; font-size:0.9rem; display:none;">⚠️ Fill all fields correctly</p>
+      <p id="registerError" style="color:red; font-size:0.9rem; display:none;">⚠ Fill all fields correctly</p>
       <p class="switch-auth">Already have an account? <span onclick="showLogin()">Login</span></p>
     </div>
   </div>
 
-  <script>
-  // Show Register form
-  function showRegister() {
-    document.getElementById("loginForm").classList.add("hidden");
-    document.getElementById("registerForm").classList.remove("hidden");
-    document.getElementById("loginError").style.display = "none";
-    document.getElementById("registerError").style.display = "none";
-  }
+  <script type="module">
+    import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 
-  // Show Login form
-  function showLogin() {
-    document.getElementById("registerForm").classList.add("hidden");
-    document.getElementById("loginForm").classList.remove("hidden");
-    document.getElementById("loginError").style.display = "none";
-    document.getElementById("registerError").style.display = "none";
-  }
+    const SUPABASE_URL = 'https://nusxcdyngdgeieaylaic.supabase.co'
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im51c3hjZHluZ2RnZWllYXlsYWljIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTczMTY3NDgsImV4cCI6MjA3Mjg5Mjc0OH0.vV3WAe3pSIH373Njj59dEIJ8mZs0TCrO3_hiezOKAW0'
 
-  // Register user
-  function register() {
-    const user = document.getElementById("regUsername").value.trim();
-    const pass = document.getElementById("regPassword").value.trim();
-    const aadhaar = document.getElementById("regAadhaar").value.trim();
-    const phone = document.getElementById("regPhone").value.trim();
+    const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
 
-    // Validation
-    if (!user || !pass || !aadhaar || !phone) {
-      document.getElementById("registerError").innerText = "⚠️ All fields are required.";
-      document.getElementById("registerError").style.display = "block";
-      return;
+    // Show Register form
+    function showRegister() {
+      document.getElementById("loginForm").classList.add("hidden");
+      document.getElementById("registerForm").classList.remove("hidden");
+      document.getElementById("loginError").style.display = "none";
+      document.getElementById("registerError").style.display = "none";
     }
-    if (!/^\d{12}$/.test(aadhaar)) {
-      document.getElementById("registerError").innerText = "⚠️ Aadhaar must be 12 digits.";
-      document.getElementById("registerError").style.display = "block";
-      return;
-    }
-    if (!/^\d{10}$/.test(phone)) {
-      document.getElementById("registerError").innerText = "⚠️ Phone number must be 10 digits.";
-      document.getElementById("registerError").style.display = "block";
-      return;
+    // Show Login form
+    function showLogin() {
+      document.getElementById("registerForm").classList.add("hidden");
+      document.getElementById("loginForm").classList.remove("hidden");
+      document.getElementById("loginError").style.display = "none";
+      document.getElementById("registerError").style.display = "none";
     }
 
-    // Save user in localStorage
-    localStorage.setItem("user", JSON.stringify({ user, pass, aadhaar, phone }));
-    alert("✅ Registration Successful! Please login.");
-    showLogin();
-  }
+    async function register() {
+      const user = document.getElementById("regUsername").value.trim();
+      const pass = document.getElementById("regPassword").value.trim();
+      const aadhaar = document.getElementById("regAadhaar").value.trim();
+      const phone = document.getElementById("regPhone").value.trim();
 
-  // Login
-  function login() {
-    const user = document.getElementById("loginUsername").value.trim();
-    const pass = document.getElementById("loginPassword").value.trim();
-    const savedUser = JSON.parse(localStorage.getItem("user"));
+      if (!user || !pass || !aadhaar || !phone) {
+        document.getElementById("registerError").innerText = "⚠ All fields are required.";
+        document.getElementById("registerError").style.display = "block";
+        return;
+      }
+      if (!/^\d{12}$/.test(aadhaar)) {
+        document.getElementById("registerError").innerText = "⚠ Aadhaar must be 12 digits.";
+        document.getElementById("registerError").style.display = "block";
+        return;
+      }
+      if (!/^\d{10}$/.test(phone)) {
+        document.getElementById("registerError").innerText = "⚠ Phone number must be 10 digits.";
+        document.getElementById("registerError").style.display = "block";
+        return;
+      }
 
-    if (savedUser && savedUser.user === user && savedUser.pass === pass) {
-      localStorage.setItem("loggedIn", "true");
-      window.location.href = "home.html"; // redirect to home
-    } else {
-      document.getElementById("loginError").innerText = "❌ Invalid username or password.";
-      document.getElementById("loginError").style.display = "block";
+      try {
+        const { data, error } = await supabase
+          .from('registrations')
+          .insert([{ 
+            username: user, 
+            password: pass, 
+            aadhar: aadhaar, 
+            phone: phone 
+          }]);
+        if (error) throw error;
+        alert("✅ Registration Successful! Please login.");
+        showLogin();
+      } catch (error) {
+        document.getElementById("registerError").innerText = "⚠ Registration failed. Try again.";
+        document.getElementById("registerError").style.display = "block";
+        console.error(error);
+      }
     }
-  }
 
-  // Logout (you can call this in home.html)
-  function logout() {
-    localStorage.removeItem("loggedIn");
-    window.location.href = "index.html";
-  }
-
-  // Auto redirect if already logged in
-  window.onload = function() {
-    if (localStorage.getItem("loggedIn") === "true") {
-      window.location.href = "home.html";
+    // Login is still localstorage-based here; you may want to extend it to Supabase Auth in future
+    function login() {
+      const user = document.getElementById("loginUsername").value.trim();
+      const pass = document.getElementById("loginPassword").value.trim();
+      const savedUser = JSON.parse(localStorage.getItem("user"));
+      if (savedUser && savedUser.user === user && savedUser.pass === pass) {
+        localStorage.setItem("loggedIn", "true");
+        window.location.href = "home.html"; // redirect to home
+      } else {
+        document.getElementById("loginError").innerText = "❌ Invalid username or password.";
+        document.getElementById("loginError").style.display = "block";
+      }
     }
-  };
-</script>
 
+    // Logout function remains same
+    function logout() {
+      localStorage.removeItem("loggedIn");
+      window.location.href = "index.html";
+    }
+
+    // Auto redirect if already logged in
+    window.onload = function() {
+      if (localStorage.getItem("loggedIn") === "true") {
+        window.location.href = "home.html";
+      }
+    };
+    
+  </script>
 </body>
 </html>
