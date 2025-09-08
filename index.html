@@ -1,16 +1,11 @@
-      <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>CivicRevolution - Login/Register</title>
   <style>
-    /* Reset */
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
       font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
       background: linear-gradient(135deg, #2c8ef4, #14cba8);
@@ -53,9 +48,7 @@
       margin-top: 0.5rem;
       transition: 0.3s;
     }
-    button:hover {
-      background: #1e4ed8;
-    }
+    button:hover { background: #1e4ed8; }
     .switch-auth {
       text-align: center;
       margin-top: 1rem;
@@ -66,10 +59,7 @@
       cursor: pointer;
       font-weight: bold;
     }
-    .hidden {
-      display: none;
-    }
-    /* Animation */
+    .hidden { display: none; }
     @keyframes fadeIn {
       from {opacity: 0; transform: translateY(20px);}
       to {opacity: 1; transform: translateY(0);}
@@ -83,9 +73,9 @@
       <h1>Login</h1>
       <input type="text" id="loginUsername" placeholder="Username" />
       <input type="password" id="loginPassword" placeholder="Password" />
-      <button onclick="login()">Login</button>
+      <button id="loginBtn">Login</button>
       <p id="loginError" style="color:red; font-size:0.9rem; display:none;">❌ Invalid credentials</p>
-      <p class="switch-auth">Don’t have an account? <span onclick="showRegister()">Register</span></p>
+      <p class="switch-auth">Don’t have an account? <span id="registerSwitch">Register</span></p>
     </div>
     <!-- REGISTER FORM -->
     <div id="registerForm" class="hidden">
@@ -94,9 +84,9 @@
       <input type="password" id="regPassword" placeholder="Password" />
       <input type="text" id="regAadhaar" placeholder="Aadhaar Number" maxlength="12" />
       <input type="text" id="regPhone" placeholder="Phone Number" maxlength="10" />
-      <button onclick="register()">Register</button>
+      <button id="registerBtn">Register</button>
       <p id="registerError" style="color:red; font-size:0.9rem; display:none;">⚠ Fill all fields correctly</p>
-      <p class="switch-auth">Already have an account? <span onclick="showLogin()">Login</span></p>
+      <p class="switch-auth">Already have an account? <span id="loginSwitch">Login</span></p>
     </div>
   </div>
   <script type="module">
@@ -104,26 +94,27 @@
     const SUPABASE_URL = 'https://nusxcdyngdgeieaylaic.supabase.co'
     const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im51c3hjZHluZ2RnZWllYXlsYWljIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTczMTY3NDgsImV4cCI6MjA3Mjg5Mjc0OH0.vV3WAe3pSIH373Njj59dEIJ8mZs0TCrO3_hiezOKAW0'
     const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
-    // Show Register form
+
+    // -- UI logic
     function showRegister() {
       document.getElementById("loginForm").classList.add("hidden");
       document.getElementById("registerForm").classList.remove("hidden");
       document.getElementById("loginError").style.display = "none";
       document.getElementById("registerError").style.display = "none";
     }
-    // Show Login form
     function showLogin() {
       document.getElementById("registerForm").classList.add("hidden");
       document.getElementById("loginForm").classList.remove("hidden");
       document.getElementById("loginError").style.display = "none";
       document.getElementById("registerError").style.display = "none";
     }
-    async function register() {
+    // -- Supabase registration
+    async function register(e) {
+      if (e) e.preventDefault();
       const user = document.getElementById("regUsername").value.trim();
       const pass = document.getElementById("regPassword").value.trim();
       const aadhaar = document.getElementById("regAadhaar").value.trim();
       const phone = document.getElementById("regPhone").value.trim();
-      console.log('Register called with:', { user, pass, aadhaar, phone });
       if (!user || !pass || !aadhaar || !phone) {
         document.getElementById("registerError").innerText = "⚠ All fields are required.";
         document.getElementById("registerError").style.display = "block";
@@ -148,7 +139,6 @@
             aadhar: aadhaar, 
             phone: phone 
           }]);
-        console.log('Supabase insert:', { data, error });
         if (error) throw error;
         alert("✅ Registration Successful! Please login.");
         showLogin();
@@ -158,31 +148,33 @@
         console.error('Supabase insert error:', error);
       }
     }
-    // Login is still localstorage-based here; you may want to extend it to Supabase Auth in future
-    function login() {
+    // -- Login: For now, use localStorage-based logic for compatibility with your original setup
+    function login(e) {
+      if (e) e.preventDefault();
       const user = document.getElementById("loginUsername").value.trim();
       const pass = document.getElementById("loginPassword").value.trim();
+      // This only works if you previously used localStorage; for Supabase login, implement Auth later!
       const savedUser = JSON.parse(localStorage.getItem("user"));
       if (savedUser && savedUser.user === user && savedUser.pass === pass) {
         localStorage.setItem("loggedIn", "true");
-        window.location.href = "home.html"; // redirect to home
+        window.location.href = "home.html";
       } else {
         document.getElementById("loginError").innerText = "❌ Invalid username or password.";
         document.getElementById("loginError").style.display = "block";
       }
     }
-    // Logout function remains same
-    function logout() {
-      localStorage.removeItem("loggedIn");
-      window.location.href = "index.html";
-    }
+    // Wiring handlers
+    document.getElementById("registerSwitch").onclick = showRegister;
+    document.getElementById("loginSwitch").onclick = showLogin;
+    document.getElementById("registerBtn").onclick = register;
+    document.getElementById("loginBtn").onclick = login;
+
     // Auto redirect if already logged in
     window.onload = function() {
       if (localStorage.getItem("loggedIn") === "true") {
         window.location.href = "home.html";
       }
     };
-    
   </script>
 </body>
 </html>
