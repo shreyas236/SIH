@@ -74,7 +74,7 @@
       <input type="text" id="loginUsername" placeholder="Username" />
       <input type="password" id="loginPassword" placeholder="Password" />
       <button id="loginBtn">Login</button>
-      <p id="loginError" style="color:red; font-size:0.9rem; display:none;">❌ Invalid credentials</p>
+      <p id="loginError" style="color:red; font-size:0.9rem; display:none;">❌ Invalid username or password.</p>
       <p class="switch-auth">Don’t have an account? <span id="registerSwitch">Register</span></p>
     </div>
     <!-- REGISTER FORM -->
@@ -95,7 +95,6 @@
     const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im51c3hjZHluZ2RnZWllYXlsYWljIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTczMTY3NDgsImV4cCI6MjA3Mjg5Mjc0OH0.vV3WAe3pSIH373Njj59dEIJ8mZs0TCrO3_hiezOKAW0'
     const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
 
-    // -- UI logic
     function showRegister() {
       document.getElementById("loginForm").classList.add("hidden");
       document.getElementById("registerForm").classList.remove("hidden");
@@ -108,7 +107,7 @@
       document.getElementById("loginError").style.display = "none";
       document.getElementById("registerError").style.display = "none";
     }
-    // -- Supabase registration
+    // --- Registration using Supabase
     async function register(e) {
       if (e) e.preventDefault();
       const user = document.getElementById("regUsername").value.trim();
@@ -131,6 +130,17 @@
         return;
       }
       try {
+        // Optional: Check if user already exists
+        const { data: existing } = await supabase
+            .from('registrations')
+            .select('username')
+            .eq('username', user);
+        if (existing && existing.length > 0) {
+          document.getElementById("registerError").innerText = "⚠ Username already registered.";
+          document.getElementById("registerError").style.display = "block";
+          return;
+        }
+        // Insert new registration
         const { data, error } = await supabase
           .from('registrations')
           .insert([{ 
@@ -148,14 +158,23 @@
         console.error('Supabase insert error:', error);
       }
     }
-    // -- Login: For now, use localStorage-based logic for compatibility with your original setup
-    function login(e) {
+    // --- Login using Supabase
+    async function login(e) {
       if (e) e.preventDefault();
       const user = document.getElementById("loginUsername").value.trim();
       const pass = document.getElementById("loginPassword").value.trim();
-      // This only works if you previously used localStorage; for Supabase login, implement Auth later!
-      const savedUser = JSON.parse(localStorage.getItem("user"));
-      if (savedUser && savedUser.user === user && savedUser.pass === pass) {
+      // Query for matching user in Supabase
+      const { data, error } = await supabase
+        .from('registrations')
+        .select('*')
+        .eq('username', user)
+        .eq('password', pass);
+      if (error) {
+        document.getElementById("loginError").innerText = "❌ Error reading database.";
+        document.getElementById("loginError").style.display = "block";
+        return;
+      }
+      if (data && data.length > 0) {
         localStorage.setItem("loggedIn", "true");
         window.location.href = "home.html";
       } else {
@@ -163,13 +182,13 @@
         document.getElementById("loginError").style.display = "block";
       }
     }
-    // Wiring handlers
+    // Attach action handlers
     document.getElementById("registerSwitch").onclick = showRegister;
     document.getElementById("loginSwitch").onclick = showLogin;
     document.getElementById("registerBtn").onclick = register;
     document.getElementById("loginBtn").onclick = login;
 
-    // Auto redirect if already logged in
+    // Optional: auto-redirect if already logged in
     window.onload = function() {
       if (localStorage.getItem("loggedIn") === "true") {
         window.location.href = "home.html";
@@ -178,3 +197,4 @@
   </script>
 </body>
 </html>
+      
