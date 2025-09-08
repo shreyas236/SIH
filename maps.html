@@ -1,58 +1,57 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Jharkhand Map</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Jharkhand Map — Current Location</title>
 
   <!-- Leaflet CSS -->
-  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 
   <style>
-    body {
-      margin: 0;
-      padding: 0;
-      font-family: Arial, sans-serif;
-    }
-    h2 {
-      text-align: center;
-      background: #2e7d32;
-      color: white;
-      margin: 0;
-      padding: 10px;
-    }
-    #map {
-      height: 100vh;   /* Full screen height */
-      width: 100vw;    /* Full screen width */
-    }
+    /* Ensure the map fills the screen */
+    html, body { height: 100%; margin: 0; padding: 0; }
+    #map { height: 100%; width: 100%; }
   </style>
 </head>
 <body>
-  <h2>Jharkhand Map (Interactive)</h2>
+  <!-- Map container -->
   <div id="map"></div>
 
   <!-- Leaflet JS -->
-  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
-  <script>
-    // Initialize the map centered on Jharkhand
-    var map = L.map('map').setView([23.61, 85.28], 7);
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
-    // Add OpenStreetMap tiles
+  <script>
+    // Center of Jharkhand
+    const jharkhandCenter = [23.6102, 85.2799];
+    const map = L.map('map').setView(jharkhandCenter, 6);
+
+    // Free OpenStreetMap tiles
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       maxZoom: 19,
       attribution: '&copy; OpenStreetMap contributors'
     }).addTo(map);
 
-    // Add a marker for Ranchi (Capital of Jharkhand)
-    L.marker([23.3441, 85.3096]).addTo(map)
-      .bindPopup("<b>Ranchi</b><br>Capital of Jharkhand.")
-      .openPopup();
+    // Marker for Jharkhand center
+    L.marker(jharkhandCenter).addTo(map).bindPopup("Jharkhand (approx center)");
 
-    // Add more district markers (example)
-    L.marker([22.8046, 86.2029]).addTo(map).bindPopup("Jamshedpur");
-    L.marker([23.7957, 86.4304]).addTo(map).bindPopup("Dhanbad");
-    L.marker([23.6693, 86.1511]).addTo(map).bindPopup("Bokaro");
-    L.marker([24.1844, 83.7998]).addTo(map).bindPopup("Palamu");
+    // Try to get user's current location automatically
+    navigator.geolocation.getCurrentPosition(
+      pos => {
+        const lat = pos.coords.latitude;
+        const lon = pos.coords.longitude;
+        const acc = pos.coords.accuracy;
+
+        L.marker([lat, lon]).addTo(map).bindPopup("📍 You are here").openPopup();
+        L.circle([lat, lon], { radius: acc }).addTo(map);
+
+        map.setView([lat, lon], 13);
+      },
+      err => {
+        alert("Could not fetch your location: " + err.message);
+      },
+      { enableHighAccuracy: true, timeout: 10000 }
+    );
   </script>
 </body>
 </html>
