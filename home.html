@@ -19,8 +19,8 @@
       background: #0a3d62;
       padding: 1rem 2rem;
       color: #fff;
-      font-size: 1.5rem;
-      font-weight: bold;
+      font-size: xx-large;
+      font-weight: 900;
       display: flex;
       align-items: center;
       justify-content: space-between;
@@ -43,7 +43,6 @@
       margin-bottom: 0.5rem;
     }
 
-    /* Issue Grid full width */
     .issue-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
@@ -114,11 +113,6 @@
       font-weight: 600;
     }
 
-    header {
-        font-size: xx-large;
-        font-weight: 900;
-    }
-
     footer {
       background: #0a3d62;
       padding: 1rem;
@@ -145,12 +139,11 @@
 </head>
 <body>
 <script>
+  // ✅ Redirect to login if not logged in
   if (localStorage.getItem("loggedIn") !== "true") {
-    // If not logged in, redirect to login page
     window.location.href = "index.html";
   }
 </script>
-
 
   <header>
     CivicRevolution
@@ -163,23 +156,23 @@
   </div>
 
   <div class="issue-grid">
-    <div class="card" onclick="window.location.href='report.html'">
+    <div class="card" data-issue="Pothole">
       <img src="https://img.icons8.com/fluency/96/road.png" alt="Pothole">
       🚧 Pothole
     </div>
-    <div class="card" onclick="window.location.href='report.html'">
+    <div class="card" data-issue="Garbage">
       <img src="https://img.icons8.com/fluency/96/trash.png" alt="Garbage">
       🗑️ Garbage
     </div>
-    <div class="card" onclick="window.location.href='report.html'">
+    <div class="card" data-issue="Street Light">
       <img src="https://img.icons8.com/fluency/96/street-light.png" alt="Street Light">
       💡 Street Light
     </div>
-    <div class="card" onclick="window.location.href='report.html'">
+    <div class="card" data-issue="Water Leakage">
       <img src="https://img.icons8.com/fluency/96/water.png" alt="Water Leakage">
       💧 Water Leakage
     </div>
-    <div class="card" onclick="window.location.href='report.html'">
+    <div class="card" data-issue="Other">
       <img src="https://img.icons8.com/fluency/96/error.png" alt="Other Issues">
       ⚠️ Other
     </div>
@@ -202,14 +195,19 @@
   </footer>
 
   <script>
-  function logout() {
-    localStorage.removeItem("loggedIn");
-    window.location.href = "index.html";
-  }
-</script>
+    // Logout
+    function logout() {
+      localStorage.removeItem("loggedIn");
+      window.location.href = "index.html";
+    }
 
+    // Card click → open report.html with selected issue
+    document.querySelectorAll('.card').forEach(card => {
+      card.addEventListener('click', () => {
+        const issue = card.dataset.issue
+        window.location.href = `report.html?issue=${encodeURIComponent(issue)}`
+      })
+    })
+  </script>
 </body>
 </html>
-
-
-
