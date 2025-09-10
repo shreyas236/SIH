@@ -1,4 +1,4 @@
-      <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
@@ -133,8 +133,20 @@
     const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im51c3hjZHluZ2RnZWllYXlsYWljIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTczMTY3NDgsImV4cCI6MjA3Mjg5Mjc0OH0.vV3WAe3pSIH373Njj59dEIJ8mZs0TCrO3_hiezOKAW0'
 
     const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
-
     const bucketName = 'Complaint-Images'
+
+    // --- Pre-select issue from URL query
+    const urlParams = new URLSearchParams(window.location.search)
+    const selectedIssue = urlParams.get('issue')
+    if (selectedIssue) {
+      const selectEl = document.getElementById('issue')
+      for (let option of selectEl.options) {
+        if (option.value === selectedIssue) {
+          option.selected = true
+          break
+        }
+      }
+    }
 
     async function uploadImage(file) {
       if (!file) return null
@@ -162,26 +174,14 @@
       const issue = document.getElementById('issue').value.trim()
       const desc = document.getElementById('desc').value.trim()
       const location = document.getElementById('location').value.trim()
-      const photoInput = document.getElementById('photo')
-      const photoFile = photoInput.files[0]
+      const photoFile = document.getElementById('photo').files[0]
 
-      if (!issue) {
-        alert('Please select an issue type')
-        return
-      }
-      if (!desc) {
-        alert('Please enter description')
-        return
-      }
-      if (!location) {
-        alert('Please enter location')
-        return
-      }
+      if (!issue) { alert('Please select an issue type'); return }
+      if (!desc) { alert('Please enter description'); return }
+      if (!location) { alert('Please enter location'); return }
 
       let image_url = null
-      if (photoFile) {
-        image_url = await uploadImage(photoFile)
-      }
+      if (photoFile) { image_url = await uploadImage(photoFile) }
 
       try {
         const { data, error } = await supabase
