@@ -20,7 +20,6 @@
       overflow-x: hidden;
     }
 
-    /* Animated background */
     body::before {
       content: '';
       position: fixed;
@@ -326,7 +325,6 @@
       box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
     }
 
-    /* Mobile Responsive */
     @media (max-width: 768px) {
       .logo {
         font-size: 2.5rem;
@@ -362,7 +360,6 @@
       }
     }
 
-    /* Scroll animations */
     @media (prefers-reduced-motion: no-preference) {
       .card, .impact, .hero {
         animation-play-state: running;
@@ -372,10 +369,8 @@
 </head>
 <body>
 <script>
-  // Note: localStorage is not supported in this environment, using sessionStorage simulation instead
-  let isLoggedIn = true; // Simulating logged in state for demo
+  let isLoggedIn = true; 
   if (!isLoggedIn) {
-    // window.location.href = "index.html";
   }
 </script>
 
@@ -451,15 +446,12 @@
 
   <script>
     function logout() {
-      // localStorage.removeItem("loggedIn"); // Not supported in this environment
       isLoggedIn = false;
       window.location.href = "index.html";
     }
 
-    // Add click handlers for issue cards with smooth animations
     document.querySelectorAll('.card').forEach((card, index) => {
       card.addEventListener('click', (e) => {
-        // Add a click effect
         card.style.transform = 'scale(0.95)';
         setTimeout(() => {
           card.style.transform = '';
@@ -468,7 +460,6 @@
         }, 150);
       });
       
-      // Add hover sound effect simulation
       card.addEventListener('mouseenter', () => {
         card.style.zIndex = '10';
       });
@@ -478,7 +469,6 @@
       });
     });
 
-    // Add parallax effect to header
     window.addEventListener('scroll', () => {
       const scrolled = window.pageYOffset;
       const header = document.querySelector('header');
@@ -487,7 +477,6 @@
       }
     });
 
-    // Add intersection observer for animations
     const observerOptions = {
       threshold: 0.1,
       rootMargin: '0px 0px -50px 0px'
@@ -508,3 +497,4 @@
   </script>
 </body>
 </html>
+
