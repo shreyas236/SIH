@@ -392,12 +392,17 @@
 <body>
 
 <script>
-  // Note: localStorage is not supported in this environment, using sessionStorage simulation instead
-  let isLoggedIn = true; // Simulating logged in state for demo
-  if (!isLoggedIn) {
-    // window.location.href = "index.html";
+  // Check login status on page load
+  if (!localStorage.getItem("loggedIn")) {
+    window.location.href = "index.html";
+  }
+
+  function logout() {
+    localStorage.removeItem("loggedIn");
+    window.location.href = "index.html";
   }
 </script>
+
 
 
 
